@@ -51,8 +51,6 @@ func (rc *Record) Encode() ([]byte, error) {
 	copy(buffer[RecordHeaderSize:RecordHeaderSize+rc.keySize], rc.key)
 	copy(buffer[RecordHeaderSize+rc.keySize:RecordHeaderSize+rc.keySize+rc.valueSize], rc.value)
 
-	DPrintf("The encoded byte1: %v with len %v", buffer, len(buffer))
-
 	// compute the crc of the record
 	temp_buffer := append(buffer[4:])
 	crc32Hash := crc32.NewIEEE()
@@ -60,7 +58,7 @@ func (rc *Record) Encode() ([]byte, error) {
 	rc.crc = uint32(crc32Hash.Sum32())
 	binary.BigEndian.PutUint32(buffer[:4], rc.crc)
 
-	DPrintf("The encoded byte2: %v with len %v", buffer, len(buffer))
+	// DPrintf("The encoded byte: %v with len %v", buffer, len(buffer))
 
 	return buffer, nil
 }
