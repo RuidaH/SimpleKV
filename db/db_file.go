@@ -5,11 +5,13 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"sync"
 )
 
 type DBFile struct {
 	file   *os.File
 	offset int64
+	mu     sync.RWMutex
 }
 
 func NewFile(fileName string) (*DBFile, error) {
@@ -47,6 +49,9 @@ func NewMergeFile(path string, ith int) (*DBFile, error) {
 
 // read the record given the offset
 func (df *DBFile) Read(offset int64, length int64) {
+	df.mu.RLock()
+	defer df.mu.RUnlock()
+
 	buffer := make([]byte, RecordHeaderSize)
 	if _, err := df.file.ReadAt(buffer, offset); err != nil {
 		DPrintf("Error reading file: %v\n", err)
@@ -79,6 +84,9 @@ func (df *DBFile) Read(offset int64, length int64) {
 
 // write the record into the datafile
 func (df *DBFile) Write(record *Record) {
+	df.mu.Lock()
+	defer df.mu.RLock()
+
 	recordByte, _ := record.Encode()
 	_, err := df.file.WriteAt(recordByte, df.offset)
 	if err != nil {

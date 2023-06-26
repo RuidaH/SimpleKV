@@ -20,10 +20,18 @@ type SimpleKV struct {
 	hintFile    *os.File // store info to speed up the reboot
 }
 
-// get
-// put
-// del
-// loading indices
-// close
-// open
-// merge
+func (kv *SimpleKV) Open() {
+
+}
+
+func (kv *SimpleKV) Close() {
+
+}
+
+func (kv *SimpleKV) LoadingIndices() {
+
+}
+
+func (kv *SimpleKV) Merge() {
+
+}
